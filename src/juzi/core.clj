@@ -1,30 +1,14 @@
 (ns juzi.core
-  (:require [clojure.java.shell :refer [sh]])
+  (:require [clojure.java.shell :refer [sh]]
+            [juzi.sen :as s])
   (:import [jline.console ConsoleReader]))
-
-(defn make-session []
-  (->> "resources/data.edn"
-       (slurp)
-       (read-string)
-       (apply concat)
-       (map #(zipmap [:en :zh] %))
-       (map vector (map inc (range)))
-       (map (fn [[id e]] [id (merge {:id id :passed false} e)]))
-       (into {})))
-
-(defn next-word [session]
-  (->> session
-       (map val)
-       (remove :passed)
-       (shuffle)
-       (first)))
-
-(defn mark-passed [session id]
-  (assoc-in session [id :passed] true))
 
 (defn clear-screen []
   (print (str (char 27) "[2J"))
   (print (str (char 27) "[;H")))
+
+(defn source []
+  (->> "resources/data.edn" (slurp) (read-string)))
 
 (defn start []
   (clear-screen)
@@ -33,15 +17,15 @@
     (println "Ready? Press any key to continue ...")
     (.readCharacter cr)
     (clear-screen)
-    (loop [s (make-session)]
-      (if-let [w (next-word s)]
+    (loop [s (s/make-session (source))]
+      (if-let [w (s/next-word s)]
         (let [{:keys [id en zh]} w]
           (println en)
           (flush)
           (let [i (.readCharacter cr)]
             (if (= \y (char i))
               (do (clear-screen)
-                  (recur (mark-passed s id)))
+                  (recur (s/mark-passed s id)))
               (do (println "ans:" zh)
                   (.readCharacter cr)
                   (clear-screen)
