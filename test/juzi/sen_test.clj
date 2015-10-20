@@ -3,12 +3,9 @@
            [juzi.sen :refer [make-session next-word mark-passed]]))
 
 (deftest make-session-test
-  (let [out (make-session [[["English11" "Translation11"] ["English12" "Translation12"]]
-                           [["English21" "Translation21"] ["English22" "Translation22"]]])]
-    (is (= out {1 {:id 1 :passed false :en "English11" :zh "Translation11"}
-                2 {:id 2 :passed false :en "English12" :zh "Translation12"}
-                3 {:id 3 :passed false :en "English21" :zh "Translation21"}
-                4 {:id 4 :passed false :en "English22" :zh "Translation22"}}))))
+  (let [out (make-session [["English1" "Translation1"] ["English2" "Translation2"]])]
+    (is (= out {1 {:id 1 :passed false :en "English1" :zh "Translation1"}
+                2 {:id 2 :passed false :en "English2" :zh "Translation2"}}))))
 
 (deftest next-word-test
   (testing "get one of the value"
