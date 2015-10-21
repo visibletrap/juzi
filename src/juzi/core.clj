@@ -21,7 +21,7 @@
 (defn start []
   (clear-screen)
   (let [cr (ConsoleReader.)]
-    (println "Press 'y' if you know how to say Chinese sentence for this following English sentence, press something else otherwise.")
+    (println "Press 'y' if you know how to say Chinese word/sentence for this following English word/sentence, press something else otherwise.")
     (println "Ready? Press any key to continue ...")
     (.readCharacter cr)
     (clear-screen)
