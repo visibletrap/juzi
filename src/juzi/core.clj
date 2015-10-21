@@ -32,7 +32,9 @@
           (flush)
           (let [i (.readCharacter cr)]
             (if (= \y (char i))
-              (do (clear-screen)
+              (do (println "ans:" zh)
+                  (.readCharacter cr)
+                  (clear-screen)
                   (recur (s/mark-passed s id)))
               (do (println "ans:" zh)
                   (.readCharacter cr)
