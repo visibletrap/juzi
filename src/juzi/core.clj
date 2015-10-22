@@ -16,7 +16,7 @@
   (mapcat load-source ["resources/word.edn" "resources/sentence.edn"]))
 
 (defn expand-data [data]
-  (map #(zipmap [:en :zh] %) data))
+  (map #(zipmap [:en :pi :zh] %) data))
 
 (defn start []
   (clear-screen)
@@ -24,13 +24,13 @@
     (clear-screen)
     (loop [s (s/make-session (expand-data (load-sources)))]
       (if-let [w (s/next-word s)]
-        (let [{:keys [id en zh]} w]
-          (println (str "What's Chinese for \"" en "\"?" " Make sure you get the tones right!" ))
+        (let [{:keys [id en pi zh]} w]
+          (println (str "What's Chinese for \"" en "\"?"))
           (println)
           (println "Press any key to see the answer ...")
           (.readCharacter cr)
           (println)
-          (println "answer:" zh)
+          (println "Answer:" pi (when zh (str "(" zh ")")))
           (println)
           (println "Were you correct? [y/n]")
           (let [i (.readCharacter cr)]
