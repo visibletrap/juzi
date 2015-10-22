@@ -21,23 +21,21 @@
 (defn start []
   (clear-screen)
   (let [cr (ConsoleReader.)]
-    (println "Press 'y' if you know how to say Chinese word/sentence for this following English word/sentence, press something else otherwise.")
-    (println "Ready? Press any key to continue ...")
-    (.readCharacter cr)
     (clear-screen)
     (loop [s (s/make-session (expand-data (load-sources)))]
       (if-let [w (s/next-word s)]
         (let [{:keys [id en zh]} w]
-          (println en)
-          (flush)
+          (println (str "What's Chinese for \"" en "\"?" " Make sure you get the tones right!" ))
+          (println)
+          (println "Press any key to see the answer ...")
+          (.readCharacter cr)
+          (println)
+          (println "answer:" zh)
+          (println)
+          (println "Were you correct? [y/n]")
           (let [i (.readCharacter cr)]
+            (clear-screen)
             (if (= \y (char i))
-              (do (println "ans:" zh)
-                  (.readCharacter cr)
-                  (clear-screen)
-                  (recur (s/mark-passed s id)))
-              (do (println "ans:" zh)
-                  (.readCharacter cr)
-                  (clear-screen)
-                  (recur s)))))
+              (recur (s/mark-passed s id))
+              (recur s))))
         (println "You have passed all the words! Gōngxǐ. Zàijiàn.")))))
