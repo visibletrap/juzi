@@ -32,10 +32,10 @@
           (println)
           (println "Answer:" pi (when zh (str "(" zh ")")))
           (println)
-          (println "Were you correct? [y/n]")
+          (println "Were you correct ? [y/n]")
           (let [i (.readCharacter cr)]
             (clear-screen)
             (if (= \y (char i))
               (recur (s/mark-passed s id))
               (recur s))))
-        (println "You have passed all the words! Gōngxǐ. Zàijiàn.")))))
+        (println "Finish! Gōngxǐ. Zàijiàn.")))))
