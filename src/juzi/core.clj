@@ -21,10 +21,12 @@
 (defn say [chinese]
   (future (sh "/usr/bin/say" chinese)))
 
-(defn question [{:keys [en]}]
+(defmulti question :mode)
+(defmethod question :en->zh [{:keys [en]}]
   (str "What's Chinese for \"" en "\"?"))
 
-(defn answer [{:keys [pi zh]}]
+(defmulti answer :mode)
+(defmethod answer :en->zh [{:keys [pi zh]}]
   (str pi (when zh (do (say zh) (str " (" zh ")")))))
 
 (defn start []
@@ -33,18 +35,18 @@
     (clear-screen)
     (loop [s (s/make-session (expand-data (load-sources)))]
       (if-let [w (s/next-word s)]
-        (let [{:keys [id en pi zh]} w]
-          (println (question w))
+        (let [r (assoc w :mode :en->zh)]
+          (println (question r))
           (println)
           (println "Press any key to see the answer ...")
           (.readCharacter cr)
           (println)
-          (println "Answer:" (answer w))
+          (println "Answer:" (answer r))
           (println)
           (println "Were you correct ? [y/n]")
           (let [i (.readCharacter cr)]
             (clear-screen)
             (if (= \y (char i))
-              (recur (s/mark-passed s id))
+              (recur (s/mark-passed s (:id r)))
               (recur s))))
         (println "Finish! Gōngxǐ. Zàijiàn.")))))
