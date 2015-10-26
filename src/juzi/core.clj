@@ -21,6 +21,12 @@
 (defn say [chinese]
   (future (sh "/usr/bin/say" chinese)))
 
+(defn question [{:keys [en]}]
+  (str "What's Chinese for \"" en "\"?"))
+
+(defn answer [{:keys [pi zh]}]
+  (str pi (when zh (do (say zh) (str " (" zh ")")))))
+
 (defn start []
   (clear-screen)
   (let [cr (ConsoleReader.)]
@@ -28,12 +34,12 @@
     (loop [s (s/make-session (expand-data (load-sources)))]
       (if-let [w (s/next-word s)]
         (let [{:keys [id en pi zh]} w]
-          (println (str "What's Chinese for \"" en "\"?"))
+          (println (question w))
           (println)
           (println "Press any key to see the answer ...")
           (.readCharacter cr)
           (println)
-          (println "Answer:" pi (when zh (do (say zh) (str "(" zh ")"))))
+          (println "Answer:" (answer w))
           (println)
           (println "Were you correct ? [y/n]")
           (let [i (.readCharacter cr)]
