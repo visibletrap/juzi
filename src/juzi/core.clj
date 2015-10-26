@@ -18,6 +18,9 @@
 (defn expand-data [data]
   (map #(zipmap [:en :pi :zh] %) data))
 
+(defn say [chinese]
+  (future (sh "/usr/bin/say" chinese)))
+
 (defn start []
   (clear-screen)
   (let [cr (ConsoleReader.)]
@@ -30,7 +33,7 @@
           (println "Press any key to see the answer ...")
           (.readCharacter cr)
           (println)
-          (println "Answer:" pi (when zh (str "(" zh ")")))
+          (println "Answer:" pi (when zh (do (say zh) (str "(" zh ")"))))
           (println)
           (println "Were you correct ? [y/n]")
           (let [i (.readCharacter cr)]
