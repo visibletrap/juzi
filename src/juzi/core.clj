@@ -22,12 +22,17 @@
   (future (sh "/usr/bin/say" chinese)))
 
 (defmulti question :mode)
-(defmethod question :en->zh [{:keys [en]}]
+(defmethod question :speak [{en :en}]
   (str "What's Chinese for \"" en "\"?"))
+(defmethod question :listen [{:keys [zh]}]
+  (future (Thread/sleep 500) (say zh))
+  (str "What's the meaning of word(s) you've just heard?"))
 
 (defmulti answer :mode)
-(defmethod answer :en->zh [{:keys [pi zh]}]
+(defmethod answer :speak [{:keys [pi zh]}]
   (str pi (when zh (do (say zh) (str " (" zh ")")))))
+(defmethod answer :listen [{:keys [pi zh en]}]
+  (str "You've heard \"" pi "\" (" zh ") which means \"" en "\"."))
 
 (defn start []
   (clear-screen)
@@ -35,7 +40,8 @@
     (clear-screen)
     (loop [s (s/make-session (expand-data (load-sources)))]
       (if-let [w (s/next-word s)]
-        (let [r (assoc w :mode :en->zh)]
+        (let [m (if (:zh w) (first (shuffle [:speak :listen])) :speak)
+              r (assoc w :mode m)]
           (println (question r))
           (println)
           (println "Press any key to see the answer ...")
